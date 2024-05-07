@@ -2,7 +2,7 @@
 
 #   Add service file to runlevel directory
 
-/bin/cp /etc/init.d/{ntpsec,ntpsec-wait} /etc/runlevels/default || true
+/bin/cp /etc/init.d/{ntpsec-openrc,ntpsec-wait} /etc/runlevels/default || true
 
 
 #   Add service to runlevel
