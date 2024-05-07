@@ -1,4 +1,4 @@
-Source: ntpdate-openrc
+Source: ntpsec-openrc
 Section: misc
 Priority: important
 Maintainer: Uri Herrera <uri_herrera@nxos.org>
@@ -7,11 +7,11 @@ Standards-Version: 3.9.6
 Homepage: http://nxos.org
 
 
-Package: ntpdate-openrc
+Package: ntpsec-openrc
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, openrc, plymouth
 Conflicts: systemd, systemd-sysv
-Description: Package to add NTPsec NTP date configuration for OpenRC.
- This package will add the boot scripts to use ntpdate
+Description: Package to add NTPsec configuration for OpenRC.
+ This package will add the boot scripts to use ntpsec
  with OpenRC in Nitrux.
 

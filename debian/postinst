@@ -2,11 +2,14 @@
 
 #   Add service file to runlevel directory
 
-/bin/cp /etc/init.d/ntpdate /etc/runlevels/default || true
+/bin/cp /etc/init.d/{ntpsec,ntpsec-wait} /etc/runlevels/default || true
+
 
 #   Add service to runlevel
 
-rc-update add ntpdate default
+rc-update add ntpsec default
+rc-update add ntpsec-wait default
+
 
 #   Update services list
 

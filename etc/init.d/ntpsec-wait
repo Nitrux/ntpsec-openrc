@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+
+description="Wait for ntpd to synchronize system clock"
+command="/usr/sbin/ntpwait"
+command_args="-s 1 -n 30000"
+command_background="no"
+extra_commands="checkconfig"
+
+depend() {
+    need ntpsec
+    after ntpsec
+}
+
+checkconfig() {
+    if [ ! -x "${command}" ]; then
+        eerror "The ntpwait command is not available!"
+        return 1
+    fi
+    return 0
+}
+
+start_pre() {
+    checkconfig || return $?
+}
+
+start() {
+    ebegin "Waiting for ntpd to synchronize system clock"
+    start-stop-daemon --start --exec ${command} -- ${command_args}
+    eend $?
+}
