@@ -1,7 +1,8 @@
 #!/sbin/openrc-run
 
 description="Network Time Service"
-command="/usr/libexec/ntpsec/ntp-systemd-wrapper"
+command="/usr/sbin/ntpd"
+command_args="-q -g -x -u ntpsec:ntpsec -p /run/ntpd.pid -c /etc/ntpsec/ntp.conf"
 pidfile="/run/ntpd.pid"
 command_background="yes"
 extra_started_commands="reload"
