@@ -1,8 +1,14 @@
+ntpsec-openrc (0.0.5)  nitrux; urgency=medium
+
+  * Update ntpsec-openrc.
+
+ -- Uri Herrera <uri_herrera@nxos.org>  Mon, 20 May 2024 17:34:00 -0500
+
 ntpsec-openrc (0.0.4)  nitrux; urgency=medium
 
   * Remove ntpsec-wait script.
 
- -- Uri Herrera <uri_herrera@nxos.org>  Wed, 19 May 2024 05:40:00 -0500
+ -- Uri Herrera <uri_herrera@nxos.org>  Wed, 15 May 2024 05:40:00 -0500
 
 ntpsec-openrc (0.0.3)  nitrux; urgency=medium
 
