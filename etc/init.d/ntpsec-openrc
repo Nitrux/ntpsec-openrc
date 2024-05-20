@@ -1,35 +1,28 @@
 #!/sbin/openrc-run
 
-description="Network Time Service"
+description="NTP Daemon"
 command="/usr/sbin/ntpd"
 command_args="-q -g -x -u ntpsec:ntpsec -p /run/ntpd.pid -c /etc/ntpsec/ntp.conf"
+command_user="ntpsec:ntpsec"
 pidfile="/run/ntpd.pid"
-command_background="yes"
-extra_started_commands="reload"
 
 depend() {
-    need network-manager
-    provide ntpsec
+    need networking
 }
 
 start_pre() {
+    checkpath --file --owner ntpsec:ntpsec /run/ntpd.pid
     checkpath --directory --owner root:root --mode 0755 /run/ntpsec
 }
 
-reload() {
-    ebegin "Reloading Network Time Service"
-    start-stop-daemon --signal HUP --pidfile "${pidfile}"
-    eend $?
-}
-
 start() {
-    ebegin "Starting Network Time Service"
-    start-stop-daemon --start --exec ${command} --pidfile ${pidfile} --background --make-pidfile
+    ebegin "Starting NTP Daemon"
+    start-stop-daemon --start --exec ${command} -- ${command_args}
     eend $?
 }
 
 stop() {
-    ebegin "Stopping Network Time Service"
-    start-stop-daemon --stop --pidfile ${pidfile}
+    ebegin "Stopping NTP Daemon"
+    start-stop-daemon --stop --exec ${command} --pidfile ${pidfile}
     eend $?
 }
