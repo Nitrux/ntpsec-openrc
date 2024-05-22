@@ -1,3 +1,9 @@
+ntpsec-openrc (0.0.7)  nitrux; urgency=medium
+
+  * Add the correct file to the runlevel.
+
+ -- Uri Herrera <uri_herrera@nxos.org>  Tue, 21 May 2024 20:00:00 -0500
+
 ntpsec-openrc (0.0.6)  nitrux; urgency=medium
 
   * Update ntpsec-openrc to check the onwership of /var/log/ntpsec.
