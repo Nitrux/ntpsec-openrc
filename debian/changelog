@@ -1,3 +1,11 @@
+ntpsec-openrc (0.0.6)  nitrux; urgency=medium
+
+  * Update ntpsec-openrc to check the onwership of /var/log/ntpsec.
+  * Create the directory when installing the package and check if the user exists.
+  * Fix the dependencies for this package.
+
+ -- Uri Herrera <uri_herrera@nxos.org>  Tue, 21 May 2024 19:13:00 -0500
+
 ntpsec-openrc (0.0.5)  nitrux; urgency=medium
 
   * Update ntpsec-openrc.

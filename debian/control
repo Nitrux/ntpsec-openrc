@@ -9,7 +9,7 @@ Homepage: http://nxos.org
 
 Package: ntpsec-openrc
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, openrc, plymouth
+Depends: ${shlibs:Depends}, ${misc:Depends}, openrc, ntpsec, ntpsec-ntpdate
 Conflicts: systemd, systemd-sysv
 Description: Package to add NTPsec configuration for OpenRC.
  This package will add the boot scripts to use ntpsec

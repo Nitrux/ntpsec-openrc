@@ -1,3 +1,11 @@
-#! /bin/bash
+#!/bin/bash
 
-exit 0
+# Create directory for ntpsec
+mkdir -p /var/log/ntpsec
+
+# Check if the user ntpsec exists
+if id "ntpsec" &>/dev/null; then
+    chown ntpsec:ntpsec /var/log/ntpsec
+else
+    echo "Error: User ntpsec does not exist. Directory ownership not changed."
+fi
