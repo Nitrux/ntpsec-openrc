@@ -19,6 +19,14 @@ start_pre() {
 start() {
     ebegin "Starting NTP Daemon"
     start-stop-daemon --start --exec ${command} -- ${command_args}
+
+    sleep 3
+    if grep -q "DNS: dns_check: DNS_error: -3, Temporary failure in name resolution" /var/log/syslog; then
+        eerror "NTP Daemon encountered a DNS resolution failure. Stopping the service."
+        stop
+        return 1
+    fi
+
     eend $?
 }
 

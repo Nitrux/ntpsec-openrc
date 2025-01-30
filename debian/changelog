@@ -1,3 +1,9 @@
+ntpsec-openrc (0.0.8)  nitrux; urgency=medium
+
+  * Stop the service if DNS fails.
+
+ -- Uri Herrera <uri_herrera@nxos.org>  Thu, 30 Jan 2025 10:30:00 -0500
+
 ntpsec-openrc (0.0.7)  nitrux; urgency=medium
 
   * Add the correct file to the runlevel.
