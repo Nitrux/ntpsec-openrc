@@ -1,37 +1,33 @@
 #!/sbin/openrc-run
+# Copyright (c) 2007-2021 The Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
 
-description="NTP Daemon"
+description="Starts the NTPsec time synchronization daemon"
 command="/usr/sbin/ntpd"
-command_args="-q -g -x -u ntpsec:ntpsec -p /run/ntpd.pid -c /etc/ntpsec/ntp.conf"
-command_user="ntpsec:ntpsec"
+# The user is set here, so command_user is not needed.
+command_args="-g -x -u ntpsec:ntpsec -p /run/ntpd.pid -c /etc/ntpsec/ntp.conf"
 pidfile="/run/ntpd.pid"
 
 depend() {
-    need networking
+	# Needs the network to be online to reach time servers.
+	need net
 }
 
 start_pre() {
-    checkpath --file --owner ntpsec:ntpsec /run/ntpd.pid
-    checkpath --directory --owner root:root --mode 0755 /run/ntpsec
-    checkpath --directory --owner ntpsec:ntpsec --mode 0755 /var/log/ntpsec
+	# Ensure necessary directories exist with correct permissions.
+	checkpath --directory --owner ntpsec:ntpsec --mode 0755 /run/ntpsec /var/log/ntpsec
 }
 
-start() {
-    ebegin "Starting NTP Daemon"
-    start-stop-daemon --start --exec ${command} -- ${command_args}
+start_post() {
+	# This function runs right after the daemon starts.
+	# We wait a moment for the daemon to attempt connections.
+	sleep 3
 
-    sleep 3
-    if grep -q "DNS: dns_check: DNS_error: -3, Temporary failure in name resolution" /var/log/syslog; then
-        eerror "NTP Daemon encountered a DNS resolution failure. Stopping the service."
-        stop
-        return 1
-    fi
-
-    eend $?
-}
-
-stop() {
-    ebegin "Stopping NTP Daemon"
-    start-stop-daemon --stop --exec ${command} --pidfile ${pidfile}
-    eend $?
+	# Check the log for a specific DNS failure.
+	if grep -q "DNS: dns_check: DNS_error: -3, Temporary failure in name resolution" /var/log/ntpsec/ntp.log; then
+		eerror "NTPd failed to resolve hosts, stopping service."
+		# The 'stop' command here refers to the built-in stop action.
+		stop
+		return 1
+	fi
 }

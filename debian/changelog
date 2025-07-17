@@ -1,3 +1,9 @@
+ntpsec-openrc (0.0.9)  nitrux; urgency=medium
+
+  * Refactor and rename service files.
+
+ -- Uri Herrera <uri_herrera@nxos.org>  Thu, 17 Jul 2025 16:54:00 -0500
+
 ntpsec-openrc (0.0.8)  nitrux; urgency=medium
 
   * Stop the service if DNS fails.
