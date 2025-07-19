@@ -2,30 +2,42 @@
 
 description="Starts the NTPsec time synchronization daemon"
 command="/usr/sbin/ntpd"
-# The user is set here, so command_user is not needed.
-command_args="-g -x -u ntpsec:ntpsec -p /run/ntpd.pid -c /etc/ntpsec/ntp.conf"
-pidfile="/run/ntpd.pid"
+command_args="-n -c /etc/ntpsec/ntp.conf -u ntpsec:ntpsec ${NTPD_OPTS}"
+command_args_supervise="--respawn-max 3 --respawn-period 60"
+supervisor=supervise-daemon
 
 depend() {
-	# Needs the network to be online to reach time servers.
 	need net
+	after localmount
+	use logger
 }
 
-start_pre() {
-	# Ensure necessary directories exist with correct permissions.
-	checkpath --directory --owner ntpsec:ntpsec --mode 0755 /run/ntpsec /var/log/ntpsec
-}
+	start_pre() {
+		local dhcp_conf="/run/ntpsec/ntp.conf.dhcp"
+		local config_file="/etc/ntpsec/ntp.conf"
 
-start_post() {
-	# This function runs right after the daemon starts.
-	# We wait a moment for the daemon to attempt connections.
-	sleep 3
+		if [ "$IGNORE_DHCP" != "yes" ] && [ -e "$dhcp_conf" ]; then
+			config_file="$dhcp_conf"
+			command_args="${command_args//-c \/etc\/ntpsec\/ntp.conf/-c $config_file}"
+		fi
 
-	# Check the log for a specific DNS failure.
-	if grep -q "DNS: dns_check: DNS_error: -3, Temporary failure in name resolution" /var/log/ntpsec/ntp.log; then
-		eerror "NTPd failed to resolve hosts, stopping service."
-		# The 'stop' command here refers to the built-in stop action.
-		stop
-		return 1
-	fi
-}
+		checkpath -d -o ntpsec:ntpsec -m 0755 /run/ntpsec /var/log/ntpsec
+
+		local failures=0
+		while IFS= read -r line; do
+			set -- "$line"
+			case $1 in
+				server|pool)
+					if ! getent hosts "$2" >/dev/null; then
+						eerror "Cannot resolve NTP server: $2"
+						failures=$((failures + 1))
+					fi
+					;;
+			esac
+		done < "$config_file"
+
+		if [ "$failures" -gt 0 ]; then
+			eerror "DNS resolution failed for one or more NTP servers. Aborting."
+			return 1
+		fi
+	}
