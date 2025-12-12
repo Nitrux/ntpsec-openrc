@@ -12,32 +12,32 @@ depend() {
 	use logger
 }
 
-	start_pre() {
-		local dhcp_conf="/run/ntpsec/ntp.conf.dhcp"
-		local config_file="/etc/ntpsec/ntp.conf"
+start_pre() {
+    local dhcp_conf="/run/ntpsec/ntp.conf.dhcp"
+    local config_file="/etc/ntpsec/ntp.conf"
 
-		if [ "$IGNORE_DHCP" != "yes" ] && [ -e "$dhcp_conf" ]; then
-			config_file="$dhcp_conf"
-			command_args="${command_args//-c \/etc\/ntpsec\/ntp.conf/-c $config_file}"
-		fi
+    if [ "${IGNORE_DHCP:-no}" != "yes" ] && [ -e "$dhcp_conf" ]; then
+        config_file="$dhcp_conf"
+        command_args="${command_args//-c \/etc\/ntpsec\/ntp.conf/-c $config_file}"
+    fi
 
-		checkpath -d -o ntpsec:ntpsec -m 0755 /run/ntpsec /var/log/ntpsec
+    checkpath -d -o ntpsec:ntpsec -m 0755 /run/ntpsec /var/log/ntpsec
 
-		local failures=0
-		while IFS= read -r line; do
-			set -- "$line"
-			case $1 in
-				server|pool)
-					if ! getent hosts "$2" >/dev/null; then
-						eerror "Cannot resolve NTP server: $2"
-						failures=$((failures + 1))
-					fi
-					;;
-			esac
-		done < "$config_file"
+    local failures=0
+    while IFS= read -r line; do
+        set -- "$line"
+        case $1 in
+            server|pool)
+                if ! getent hosts "$2" >/dev/null; then
+                    eerror "Cannot resolve NTP server: $2"
+                    failures=$((failures + 1))
+                fi
+                ;;
+        esac
+    done < "$config_file"
 
-		if [ "$failures" -gt 0 ]; then
-			eerror "DNS resolution failed for one or more NTP servers. Aborting."
-			return 1
-		fi
-	}
+    if [ "$failures" -gt 0 ]; then
+        eerror "DNS resolution failed for one or more NTP servers. Aborting."
+        return 1
+    fi
+}
